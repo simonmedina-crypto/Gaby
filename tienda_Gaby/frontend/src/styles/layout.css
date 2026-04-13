@@ -1,0 +1,37 @@
+/* Fuerza el contenido a usar el 100% del ancho disponible a la derecha del sidebar */
+.content-full {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Contenedores amplios sin márgenes laterales artificiales */
+.no-side-margins {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Grids de trabajo a 12 columnas consistentes */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+/* Evita que elementos padres establezcan límites de ancho */
+.max-none {
+  max-width: none !important;
+}
+
+/* Grid específica para POS: contenido + panel lateral fijo */
+.pos-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .pos-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: radial-gradient(circle at top right, #f8fafc, #eff6ff);
+  color: #1e293b;
+}
+
+/* Efecto de cristal para las tarjetas */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* Mejora de contraste general y legibilidad para la app */
+.licorera-root .glass-card,
+.licorera-root .card,
+.licorera-root .tremor-card,
+.licorera-root .card-wrapper,
+.licorera-root .product-card,
+.licorera-root .sidebar,
+.licorera-root .main,
+.licorera-root .header,
+.licorera-root .section,
+.licorera-root .form-control {
+  background: rgba(10, 16, 35, 0.95) !important;
+  border: 1px solid rgba(245, 97, 11, 0.45) !important;
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.5) !important;
+  color: #f8fafc !important;
+}
+
+.licorera-root .text-slate-800,
+.licorera-root .text-slate-900,
+.licorera-root .text-slate-700,
+.licorera-root .text-slate-600,
+.licorera-root .text-slate-500,
+.licorera-root .text-slate-400,
+.licorera-root .text-slate-300,
+.licorera-root .text-slate-200,
+.licorera-root .text-slate-100 {
+  color: #f8fafc !important;
+}
+
+.licorera-root .bg-white,
+.licorera-root .bg-white\/90,
+.licorera-root .bg-slate-50,
+.licorera-root .bg-slate-100,
+.licorera-root .bg-slate-200,
+.licorera-root .bg-slate-300 {
+  background: rgba(14, 23, 48, 0.92) !important;
+  color: #f8fafc !important;
+}
+
+.licorera-root button,
+.licorera-root .tremor-btn,
+.licorera-root .btn {
+  color: #0f172a !important;
+  background: linear-gradient(120deg, #f59e0b, #fbbf24) !important;
+  border: 1px solid rgba(245, 158, 11, 0.9) !important;
+  box-shadow: 0 10px 18px rgba(245, 158, 11, 0.28) !important;
+}
+
+.licorera-root button:hover,
+.licorera-root .tremor-btn:hover,
+.licorera-root .btn:hover {
+  filter: brightness(1.05);
+}
+
+.licorera-root .table-row,
+.licorera-root .table-row-even,
+.licorera-root .table-row-odd {
+  background: rgba(10, 15, 35, 0.85) !important;
+}
+
+.licorera-root .table-row:hover{
+  background: rgba(245, 146, 30, 0.2) !important;
+}

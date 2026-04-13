@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-green: #00a884;
+  --bg-gray: #f3f4f6;
+}
+
+html, body, #root {
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--bg-gray);
+  font-family: 'Inter', sans-serif;
+}
+
+.table-header-emerald {
+  background-color: var(--primary-green);
+  color: white;
+}
+
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

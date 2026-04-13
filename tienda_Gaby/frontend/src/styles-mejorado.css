@@ -1,0 +1,136 @@
+/* CSS específico para Licorera Gaby - Sin interferencia con Tremor */
+
+/* Solo sobrescribir colores básicos sin romper componentes */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Contenedores principales sin afectar componentes de Tremor */
+.container, .main-container, div[class*="container"] {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  padding: 24px !important;
+  margin: 20px !important;
+}
+
+/* Tarjetas específicas del CRUD */
+.card, div[class*="card"]:not([class*="tremor"]) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  padding: 20px !important;
+}
+
+/* Botones sin afectar botones de Tremor */
+.btn, button:not([class*="tremor"]), [class*="btn"]:not([class*="tremor"]) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+}
+
+.btn:hover, button:hover:not([class*="tremor"]), [class*="btn"]:hover:not([class*="tremor"]) {
+  background: linear-gradient(135deg, #5a67d8 0%, #664199 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Headers y títulos */
+h1, h2, h3, h4, h5, h6, .title, [class*="title"]:not([class*="tremor"]) {
+  color: #2d3748 !important;
+  font-weight: 700 !important;
+  margin-bottom: 16px !important;
+}
+
+/* Texto general */
+p, span, div:not([class*="tremor"]), [class*="text"]:not([class*="tremor"]) {
+  color: #2d3748 !important;
+}
+
+/* Inputs */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px solid rgba(102, 126, 234, 0.3) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  color: #2d3748 !important;
+  transition: all 0.3s ease !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+  outline: none !important;
+}
+
+/* Tablas */
+table, [class*="table"]:not([class*="tremor"]) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sidebar */
+.sidebar, [class*="sidebar"]:not([class*="tremor"]), nav {
+  background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%) !important;
+  color: white !important;
+}
+
+.sidebar-item, [class*="sidebar"] li:not([class*="tremor"]), nav a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: all 0.3s ease !important;
+}
+
+.sidebar-item:hover, [class*="sidebar"] li:hover:not([class*="tremor"]), nav a:hover {
+  background: rgba(102, 126, 234, 0.2) !important;
+  color: white !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 4px !important;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card, div[class*="card"]:not([class*="tremor"]) {
+  animation: fadeIn 0.6s ease-out !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container, .main-container, div[class*="container"] {
+    margin: 10px !important;
+    padding: 16px !important;
+  }
+  
+  .btn, button:not([class*="tremor"]), [class*="btn"]:not([class*="tremor"]) {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+  }
+}

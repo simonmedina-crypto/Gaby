@@ -1,0 +1,141 @@
+/* CSS simple y directo para Licorera Gaby */
+
+/* Fondo principal */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Contenedor principal */
+#root {
+  background: rgba(15, 23, 42, 0.94) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35) !important;
+  padding: 24px !important;
+  margin: 20px !important;
+}
+
+/* Tarjetas y paneles del CRUD */
+div[class*="bg-white"],
+[class*="card"],
+.tremor-card,
+.card,
+.product-card,
+.form-control,
+.table-wrapper,
+.custom-table {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(66, 82, 110, 0.75) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Botones */
+button {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.28) !important;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #f97316 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(220, 38, 38, 0.35) !important;
+}
+
+/* Inputs */
+input, select, textarea {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 2px solid rgba(148, 163, 184, 0.45) !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+  color: #e2e8f0 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(226, 232, 240, 0.55) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18) !important;
+  outline: none !important;
+}
+
+/* Texto */
+h1, h2, h3, h4, h5, h6,
+p, span, div {
+  color: #e2e8f0 !important;
+}
+
+/* Tablas */
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: #e2e8f0 !important;
+}
+
+table {
+  border-collapse: collapse !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45) !important;
+}
+
+th, td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+  padding: 14px 18px !important;
+}
+
+tr:hover {
+  background: rgba(245, 158, 11, 0.12) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%) !important;
+  border-radius: 4px !important;
+}
+
+/* Forzar tema oscuro sobre clases de fondo blanco / gris del Tailwind usado en App.jsx */
+[class*="bg-white"],
+[class*="bg-slate-50"],
+[class*="bg-slate-100"],
+[class*="bg-slate-200"],
+[class*="bg-white/"],
+[class*="bg-slate-50/"],
+[class*="bg-slate-100/"],
+[class*="bg-slate-200/"],
+[class*="bg-slate-900/"] {
+  background-color: rgba(15, 23, 42, 0.94) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.bg-slate-900/80,
+.bg-slate-900/70,
+.bg-slate-900/75,
+.bg-slate-900/95 {
+  background-color: rgba(15, 23, 42, 0.88) !important;
+}
+
+.bg-slate-950,
+.bg-slate-950\/70,
+.bg-slate-900 {
+  background-color: rgba(15, 23, 42, 0.96) !important;
+}

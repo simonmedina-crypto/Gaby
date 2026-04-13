@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/pomerania.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tienda Gaby - Licorera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Inter:wght@900&display=swap');
+  
+  body { 
+    font-family: 'Quicksand', sans-serif; 
+    background-color: #fff9f2; /* Crema suave como piel de Pomerania */
+  }
+
+  /* Paleta Licorera Pomerania */
+  .bg-pom-gold { background: linear-gradient(135deg, #eab308 0%, #d97706 100%) !important; }
+  .bg-esmeralda-dark { background-color: #064e3b !important; }
+  .text-pom-brown { color: #78350f; }
+
+  /* Animación de "Salto de Cachorro" */
+  .hover-pom:hover {
+    transform: translateY(-5px) scale(1.02);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .shadow-pom {
+    box-shadow: 0 20px 25px -5px rgba(217, 119, 6, 0.1), 0 10px 10px -5px rgba(217, 119, 6, 0.04);
+  }
+</style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,69 +1,53 @@
+version: '3.8'
 
-Si `backend\package.json` no existe, crea uno básico así:
-
-```json
-{
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "Backend de Tienda Gaby",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {}
-}Set-Location C:\Users\somos\Documents\Gaby\tienda_Gaby
-Remove-Item C:\Users\somos\Documents\Gaby\node_modules -Recurse -Force
-Remove-Item C:\Users\somos\Documents\Gaby\npm-debug.log -Force
-Set-Location .\backend
-npm installservices:
+services:
   db:
     image: postgres:15
     container_name: postgres_db
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: licorera_gaby
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tienda_gaby
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
       retries: 5
 
   backend:
     build: ./tienda_Gaby/backend
     container_name: nova_backend
+    restart: always
     environment:
-      DATABASE_URL: postgresql://postgres:admin123@db:5432/licorera_gaby
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/tienda_gaby
+      CORS_ORIGINS: http://localhost:8080,http://100.79.75.118:8080
+    ports:
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "0.0.0.0:8000:8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
 
   frontend:
-    build: 
-      context: ./tienda_Gaby/frontend
-      args:
-        VITE_API_URL: /api
+    build: ./tienda_Gaby/frontend
     container_name: nova_frontend
+    restart: always
     ports:
-      - "0.0.0.0:8080:80"
+      - "8080:80"
     depends_on:
       backend:
         condition: service_healthy
+    environment:
+      VITE_API_URL: /api
 
 volumes:
   postgres_data:

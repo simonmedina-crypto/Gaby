@@ -2,8 +2,7 @@ import datetime
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, or_
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import multiprocessing
@@ -11,12 +10,16 @@ from sqlalchemy import inspect, text
 import os
 
 # --- CONFIGURACIÓN BASE DE DATOS ---
-# Para Docker, usar el nombre del servicio 'db'
-DATABASE_URL = os.environ.get(
-    'DATABASE_URL',
-    'postgresql://postgres:admin123@db:5432/licorera_gaby'
-)
-engine = create_engine(DATABASE_URL)
+# Por defecto en desarrollo local usamos SQLite.
+# En Docker Compose, define DATABASE_URL con el servicio 'db'.
+DEFAULT_DATABASE_URL = 'sqlite:///./tienda_gaby.db'
+DATABASE_URL = os.environ.get('DATABASE_URL', DEFAULT_DATABASE_URL)
+
+connect_args = {}
+if DATABASE_URL.startswith('sqlite'):
+    connect_args = {'check_same_thread': False}
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

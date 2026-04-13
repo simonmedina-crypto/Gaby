@@ -2,27 +2,24 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Login from './Login';
 import { Card, Metric, Text, Title, Badge, Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell, Button, Grid, DatePicker, BarChart, DonutChart, TabGroup, TabList, Tab } from "@tremor/react";
 import { es } from 'date-fns/locale';
-import { Barcode, TrendingUp, TrendingDown, X, Save, Plus, Edit3, Trash2, Search, Menu, LogOut, Package, LayoutDashboard, ShoppingCart, ScanLine, Zap, CreditCard, DollarSign, Wallet, Users, Calendar, Clock, Award, Eye, ChevronRight, User, CheckCircle, AlertCircle, Wine, RefreshCw, FileDown, AlertTriangle, Beer, GlassWater, Upload, Image as ImageIcon, Star, Crown, Sparkles, ArrowUpDown, Filter, Download, Upload as UploadIcon, Settings, Bell, Home, PackageOpen, ShoppingCart as ShoppingCartIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, Activity, PieChart, BarChart3, FileText, Users as UsersIcon, CreditCard as CreditCardIcon, DollarSign as DollarSignIcon, Package as PackageIcon } from 'lucide-react';
+import { Barcode, TrendingUp, TrendingDown, X, Save, Plus, Edit3, Trash2, Search, Menu, LogOut, Package, LayoutDashboard, ShoppingCart, ScanLine, Zap, CreditCard, DollarSign, Wallet, Users, Calendar, Clock, Award, Eye, ChevronRight, User, CheckCircle, AlertCircle, Wine, RefreshCw, FileDown, AlertTriangle, Beer, GlassWater, Upload, Image as ImageIcon, Star, Crown, Sparkles } from 'lucide-react';
 import Swal from 'sweetalert2';
 import './dashboard-calendar.css';
-import './styles-pomerania-mejorado.css';
+import './styles-pomerania.css';
 
 // Datos de ejemplo para el inventario (sin depender de API)
 const PRODUCTOS_EJEMPLO = [
-  { id: '001', name: 'Cerveza Corona Extra', barcode: '750100123456', cant: 24, costo: 15.0, venta: 25.0, categoria: 'Cerveza', marca: 'Corona' },
-  { id: '002', name: 'Cerveza Heineken', barcode: '750100123457', cant: 18, costo: 18.0, venta: 28.0, categoria: 'Cerveza', marca: 'Heineken' },
-  { id: '003', name: 'Vino Tinto Reserva', barcode: '750100123458', cant: 12, costo: 45.0, venta: 65.0, categoria: 'Vino', marca: 'Reserva' },
-  { id: '004', name: 'Whisky Johnnie Walker Black', barcode: '750100123459', cant: 8, costo: 120.0, venta: 150.0, categoria: 'Whisky', marca: 'Johnnie Walker' },
-  { id: '005', name: 'Ron Bacardi Superior', barcode: '750100123460', cant: 15, costo: 35.0, venta: 45.0, categoria: 'Ron', marca: 'Bacardi' },
-  { id: '006', name: 'Tequila Jose Cuervo', barcode: '750100123461', cant: 10, costo: 55.0, venta: 75.0, categoria: 'Tequila', marca: 'Jose Cuervo' },
-  { id: '007', name: 'Vodka Smirnoff', barcode: '750100123462', cant: 20, costo: 25.0, venta: 35.0, categoria: 'Vodka', marca: 'Smirnoff' },
-  { id: '008', name: 'Cerveza Budweiser', barcode: '750100123463', cant: 30, costo: 14.0, venta: 22.0, categoria: 'Cerveza', marca: 'Budweiser' },
+  { id: '001', name: 'Cerveza Corona', barcode: '750100123456', cant: 24, costo: 15.0, venta: 25.0 },
+  { id: '002', name: 'Cerveza Heineken', barcode: '750100123457', cant: 18, costo: 18.0, venta: 28.0 },
+  { id: '003', name: 'Vino Tinto', barcode: '750100123458', cant: 12, costo: 45.0, venta: 65.0 },
+  { id: '004', name: 'Whisky Johnnie Walker', barcode: '750100123459', cant: 8, costo: 120.0, venta: 150.0 },
+  { id: '005', name: 'Ron Bacardi', barcode: '750100123460', cant: 15, costo: 35.0, venta: 45.0 },
+  { id: '006', name: 'Tequila Jose Cuervo', barcode: '750100123461', cant: 10, costo: 55.0, venta: 75.0 },
 ];
 
 const VENTAS_EJEMPLO = [
-  { id: 1, producto_id: '001', nombre_producto: 'Cerveza Corona Extra', cantidad: 2, precio_unitario: 25.0, total: 50.0, metodo_pago: 'efectivo', fecha: new Date().toISOString(), vendedor: 'Simon', cliente: 'Juan Pérez' },
-  { id: 2, producto_id: '002', nombre_producto: 'Cerveza Heineken', cantidad: 1, precio_unitario: 28.0, total: 28.0, metodo_pago: 'transferencia', fecha: new Date().toISOString(), vendedor: 'Ana', cliente: 'María García' },
-  { id: 3, producto_id: '004', nombre_producto: 'Whisky Johnnie Walker Black', cantidad: 1, precio_unitario: 150.0, total: 150.0, metodo_pago: 'efectivo', fecha: new Date().toISOString(), vendedor: 'Simon', cliente: 'Carlos López' },
+  { id: 1, producto_id: '001', nombre_producto: 'Cerveza Corona', cantidad: 2, precio_unitario: 25.0, total: 50.0, metodo_pago: 'efectivo', fecha: new Date().toISOString(), vendedor: 'Simon' },
+  { id: 2, producto_id: '002', nombre_producto: 'Cerveza Heineken', cantidad: 1, precio_unitario: 28.0, total: 28.0, metodo_pago: 'transferencia', fecha: new Date().toISOString(), vendedor: 'Ana' },
 ];
 
 // Función para formatear moneda colombiana
@@ -53,9 +50,9 @@ function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '', categoria: '', marca: '' });
+  const [formData, setFormData] = useState({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '' });
   const [paginaActual, setPaginaActual] = useState(1);
-  const [productosPorPagina] = useState(10);
+  const [productosPorPagina] = useState(8);
   const [ventasPorPagina] = useState(10);
   const [paginaActualVentas, setPaginaActualVentas] = useState(1);
   const [paginaActualFiados, setPaginaActualFiados] = useState(1);
@@ -67,8 +64,6 @@ function App() {
   const [filtroVendedorDashboard, setFiltroVendedorDashboard] = useState('Todos');
   const [filtroCategoria, setFiltroCategoria] = useState('Todos');
   const [mostrarImagenCarga, setMostrarImagenCarga] = useState(false);
-  const [ordenarPor, setOrdenarPor] = useState('nombre');
-  const [direccionOrden, setDireccionOrden] = useState('asc');
   
   // Estados para fiados
   const [fiados, setFiados] = useState([]);
@@ -93,17 +88,6 @@ function App() {
       const ventasHoy = VENTAS_EJEMPLO.filter(v => new Date(v.fecha).toDateString() === hoy);
       setVentasTurno(ventasHoy);
       
-      // Mostrar notificación de carga exitosa
-      Swal.fire({
-        toast: true,
-        icon: 'success',
-        title: 'Sistema cargado',
-        text: `${PRODUCTOS_EJEMPLO.length} productos y ${VENTAS_EJEMPLO.length} ventas cargados`,
-        position: 'top-end',
-        timer: 2000,
-        showConfirmButton: false
-      });
-      
       console.log('Datos cargados exitosamente (modo local)');
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -111,36 +95,12 @@ function App() {
     }
   };
 
-  // --- FUNCIÓN PARA ORDENAR PRODUCTOS ---
-  const ordenarProductos = useCallback((productos, criterio, direccion) => {
-    return [...productos].sort((a, b) => {
-      let valorA = a[criterio];
-      let valorB = b[criterio];
-      
-      if (typeof valorA === 'string') {
-        valorA = valorA.toLowerCase();
-        valorB = valorB.toLowerCase();
-      }
-      
-      if (direccion === 'asc') {
-        return valorA > valorB ? 1 : valorA < valorB ? -1 : 0;
-      } else {
-        return valorA < valorB ? 1 : valorA > valorB ? -1 : 0;
-      }
-    });
-  }, []);
-
   // --- FUNCIÓN PARA BUSCAR PRODUCTO POR CÓDIGO DE BARRAS ---
   const buscarProductoPorBarcode = (barcode) => {
     if (!barcode.trim()) return null;
     
     const producto = PRODUCTOS_EJEMPLO.find(p => p.barcode === barcode.trim());
     if (producto) {
-      // Sonido de éxito
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
-      audio.volume = 0.3;
-      audio.play().catch(() => {});
-      
       return producto;
     } else {
       Swal.fire({
@@ -219,34 +179,12 @@ function App() {
       inputRef.current.focus();
     }
 
-    // 6. Mostrar notificación
-    Swal.fire({
-      toast: true,
-      icon: 'success',
-      title: 'Producto agregado',
-      text: `${producto.name} (${cantidadSolicitada} unidades)`,
-      position: 'top-end',
-      timer: 1500,
-      showConfirmButton: false
-    });
-
     return true;
   };
 
   // --- FUNCIÓN PARA ELIMINAR DEL CARRITO ---
   const eliminarDelCarrito = (id) => {
-    const item = carrito.find(item => item.id === id);
     setCarrito(carrito.filter(item => item.id !== id));
-    
-    Swal.fire({
-      toast: true,
-      icon: 'info',
-      title: 'Producto eliminado',
-      text: `${item.name} del carrito`,
-      position: 'top-end',
-      timer: 1500,
-      showConfirmButton: false
-    });
   };
 
   // --- FUNCIÓN PARA ACTUALIZAR CANTIDAD EN CARRITO ---
@@ -356,24 +294,6 @@ function App() {
   // --- FUNCIÓN PARA CREAR/EDITAR PRODUCTO ---
   const handleSaveProduct = () => {
     try {
-      // Validaciones
-      if (!formData.name.trim()) {
-        Swal.fire('Error', 'El nombre del producto es requerido', 'error');
-        return;
-      }
-      if (formData.cant < 0) {
-        Swal.fire('Error', 'El stock no puede ser negativo', 'error');
-        return;
-      }
-      if (formData.costo < 0 || formData.venta < 0) {
-        Swal.fire('Error', 'Los precios no pueden ser negativos', 'error');
-        return;
-      }
-      if (formData.venta <= formData.costo) {
-        Swal.fire('Error', 'El precio de venta debe ser mayor al costo', 'error');
-        return;
-      }
-
       if (isEditing) {
         // Actualizar producto existente
         const productosActualizados = productos.map(p => 
@@ -385,16 +305,14 @@ function App() {
         // Crear nuevo producto
         const nuevoProducto = {
           ...formData,
-          id: formData.id || String(productos.length + 1).padStart(3, '0'),
-          categoria: formData.categoria || 'Sin categoría',
-          marca: formData.marca || 'Sin marca'
+          id: formData.id || String(productos.length + 1).padStart(3, '0')
         };
         setProductos([...productos, nuevoProducto]);
         Swal.fire('¡Creado!', 'El producto ha sido creado', 'success');
       }
       
       setIsModalOpen(false);
-      setFormData({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '', categoria: '', marca: '' });
+      setFormData({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '' });
       setIsEditing(false);
     } catch (error) {
       console.error('Error:', error);
@@ -405,10 +323,9 @@ function App() {
   // --- FUNCIÓN PARA ELIMINAR PRODUCTO ---
   const handleDeleteProduct = async (productId) => {
     try {
-      const producto = productos.find(p => p.id === productId);
       const result = await Swal.fire({
         title: '¿Estás seguro?',
-        text: `Esta acción eliminará "${producto.name}" y no se puede deshacer`,
+        text: 'Esta acción no se puede deshacer',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',
@@ -423,7 +340,7 @@ function App() {
         
         Swal.fire({
           title: '¡Eliminado!',
-          text: `El producto "${producto.name}" ha sido eliminado`,
+          text: 'El producto ha sido eliminado',
           icon: 'success',
           timer: 1500,
           showConfirmButton: false
@@ -435,36 +352,6 @@ function App() {
     }
   };
 
-  // --- FUNCIÓN PARA EXPORTAR DATOS ---
-  const exportarDatos = () => {
-    const datos = {
-      productos: productos,
-      ventas: ventas,
-      fecha_exportacion: new Date().toISOString(),
-      exportado_por: usuarioLogueado?.nombre || 'Sistema'
-    };
-    
-    const dataStr = JSON.stringify(datos, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `licorera_gaby_${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    Swal.fire({
-      toast: true,
-      icon: 'success',
-      title: 'Datos exportados',
-      text: 'El archivo se ha descargado correctamente',
-      position: 'top-end',
-      timer: 2000,
-      showConfirmButton: false
-    });
-  };
-
   // --- EFECTOS ---
   useEffect(() => {
     cargarDatos();
@@ -473,29 +360,12 @@ function App() {
   // --- CÁLCULOS ---
   const total = carrito.reduce((sum, item) => sum + item.subtotal, 0);
   const totalProductos = productos.reduce((sum, p) => sum + p.cant, 0);
-  const productosFiltrados = useMemo(() => {
-    let filtrados = productos.filter(p => 
-      p.name.toLowerCase().includes(busquedaInventario.toLowerCase()) ||
-      p.id.toLowerCase().includes(busquedaInventario.toLowerCase()) ||
-      (p.barcode && p.barcode.includes(busquedaInventario)) ||
-      (p.categoria && p.categoria.toLowerCase().includes(busquedaInventario.toLowerCase())) ||
-      (p.marca && p.marca.toLowerCase().includes(busquedaInventario.toLowerCase()))
-    );
-    
-    // Aplicar filtro de categoría
-    if (filtroCategoria !== 'Todos') {
-      filtrados = filtrados.filter(p => p.categoria === filtroCategoria);
-    }
-    
-    // Aplicar ordenamiento
-    return ordenarProductos(filtrados, ordenarPor, direccionOrden);
-  }, [productos, busquedaInventario, filtroCategoria, ordenarPor, direccionOrden, ordenarProductos]);
-  
+  const productosFiltrados = productos.filter(p => 
+    p.name.toLowerCase().includes(busquedaInventario.toLowerCase()) ||
+    p.id.toLowerCase().includes(busquedaInventario.toLowerCase()) ||
+    (p.barcode && p.barcode.includes(busquedaInventario))
+  );
   const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
-  const valorTotalInventario = productos.reduce((sum, p) => sum + (p.cant * p.costo), 0);
-  const valorTotalVentas = ventas.reduce((sum, v) => sum + (v.total || 0), 0);
-  const productosBajoStock = productos.filter(p => p.cant <= 5).length;
-  const productosSinStock = productos.filter(p => p.cant === 0).length;
 
   // --- RENDER ---
   if (!usuarioLogueado) {
@@ -528,14 +398,14 @@ function App() {
           <nav className="space-y-3">
             {[
               { id: 'inventario', label: 'Inventario', icon: Package },
-              { id: 'ventas', label: 'Ventas', icon: ShoppingCartIcon },
+              { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'fiados', label: 'Fiados', icon: UsersIcon },
+              { id: 'fiados', label: 'Fiados', icon: Users },
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:scale-105 animate-slide-left ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:scale-105 ${
                   activeTab === tab.id 
                     ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg glow' 
                     : 'text-yellow-700 hover:bg-yellow-50'
@@ -565,7 +435,7 @@ function App() {
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         <div className="p-6">
           {/* HEADER */}
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shine">
                 <Wine className="w-8 h-8 text-white" />
@@ -592,7 +462,7 @@ function App() {
             <div className="space-y-6">
               {/* TARJETAS DE ESTADÍSTICAS */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="metric-card shine animate-bounce">
+                <Card className="metric-card shine">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-yellow-100 text-sm font-medium">Total Productos</p>
@@ -604,7 +474,7 @@ function App() {
                   </div>
                 </Card>
                 
-                <Card className="metric-card shine animate-bounce" style={{animationDelay: '0.1s'}}>
+                <Card className="metric-card shine">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-yellow-100 text-sm font-medium">Stock Total</p>
@@ -616,11 +486,11 @@ function App() {
                   </div>
                 </Card>
                 
-                <Card className="metric-card shine animate-bounce" style={{animationDelay: '0.2s'}}>
+                <Card className="metric-card shine">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-yellow-100 text-sm font-medium">Bajo Stock</p>
-                      <p className="text-3xl font-black">{productosBajoStock}</p>
+                      <p className="text-3xl font-black">{productos.filter(p => p.cant <= 5).length}</p>
                     </div>
                     <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                       <AlertTriangle className="w-6 h-6 text-white" />
@@ -628,11 +498,11 @@ function App() {
                   </div>
                 </Card>
                 
-                <Card className="metric-card shine animate-bounce" style={{animationDelay: '0.3s'}}>
+                <Card className="metric-card shine">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-yellow-100 text-sm font-medium">Valor Inventario</p>
-                      <p className="text-3xl font-black">{formatCOP(valorTotalInventario)}</p>
+                      <p className="text-3xl font-black">{formatCOP(productos.reduce((sum, p) => sum + (p.cant * p.costo), 0))}</p>
                     </div>
                     <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                       <DollarSign className="w-6 h-6 text-white" />
@@ -642,7 +512,7 @@ function App() {
               </div>
 
               {/* BARRA DE BÚSQUEDA Y ACCIONES */}
-              <Card className="shine animate-slide-up">
+              <Card className="shine">
                 <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-6">
                   <div className="flex-1 max-w-md">
                     <div className="relative">
@@ -657,57 +527,22 @@ function App() {
                     </div>
                   </div>
                   
-                  <div className="flex gap-3">
-                    <select
-                      value={filtroCategoria}
-                      onChange={(e) => setFiltroCategoria(e.target.value)}
-                      className="px-4 py-4 bg-white/90 border-2 border-yellow-400 rounded-2xl text-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-400/50 focus:border-transparent font-medium"
-                    >
-                      <option value="Todos">Todas las categorías</option>
-                      <option value="Cerveza">Cerveza</option>
-                      <option value="Vino">Vino</option>
-                      <option value="Whisky">Whisky</option>
-                      <option value="Ron">Ron</option>
-                      <option value="Tequila">Tequila</option>
-                      <option value="Vodka">Vodka</option>
-                    </select>
-                    
-                    <button
-                      onClick={() => {
-                        setOrdenarPor('nombre');
-                        setDireccionOrden(direccionOrden === 'asc' ? 'desc' : 'asc');
-                      }}
-                      className="btn-secondary flex items-center gap-2 px-4"
-                    >
-                      <ArrowUpDown className="w-4 h-4" />
-                      Ordenar
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setFormData({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '', categoria: '', marca: '' });
-                        setIsEditing(false);
-                        setIsModalOpen(true);
-                      }}
-                      className="btn shine flex items-center gap-2 px-6 py-4"
-                    >
-                      <Plus className="w-5 h-5" />
-                      <span className="font-bold">Nuevo Producto</span>
-                    </button>
-                    
-                    <button
-                      onClick={exportarDatos}
-                      className="btn-secondary flex items-center gap-2 px-4"
-                    >
-                      <Download className="w-4 h-4" />
-                      Exportar
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setFormData({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '' });
+                      setIsEditing(false);
+                      setIsModalOpen(true);
+                    }}
+                    className="btn shine flex items-center gap-2 px-6 py-4"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span className="font-bold">Nuevo Producto</span>
+                  </button>
                 </div>
               </Card>
 
               {/* TABLA DE PRODUCTOS */}
-              <Card className="shine overflow-hidden animate-slide-up" style={{animationDelay: '0.1s'}}>
+              <Card className="shine overflow-hidden">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHead>
@@ -715,8 +550,6 @@ function App() {
                         <TableHeaderCell className="text-white font-bold">ID</TableHeaderCell>
                         <TableHeaderCell className="text-white font-bold">Código</TableHeaderCell>
                         <TableHeaderCell className="text-white font-bold">Producto</TableHeaderCell>
-                        <TableHeaderCell className="text-white font-bold">Categoría</TableHeaderCell>
-                        <TableHeaderCell className="text-white font-bold">Marca</TableHeaderCell>
                         <TableHeaderCell className="text-white font-bold text-right">Stock</TableHeaderCell>
                         <TableHeaderCell className="text-white font-bold text-right">Costo</TableHeaderCell>
                         <TableHeaderCell className="text-white font-bold text-right">Venta</TableHeaderCell>
@@ -727,30 +560,14 @@ function App() {
                     <TableBody>
                       {productosFiltrados
                         .slice((paginaActual - 1) * productosPorPagina, paginaActual * productosPorPagina)
-                        .map((producto, index) => (
-                          <TableRow key={producto.id} className="hover:bg-yellow-50/50 transition-all hover-lift">
+                        .map((producto) => (
+                          <TableRow key={producto.id} className="hover:bg-yellow-50/50 transition-all">
                             <TableCell className="font-mono font-medium">{producto.id}</TableCell>
                             <TableCell className="font-mono text-sm">{producto.barcode || '-'}</TableCell>
                             <TableCell className="font-bold">{producto.name}</TableCell>
-                            <TableCell className="text-sm">
-                              <Badge 
-                                color="blue"
-                                className="font-bold"
-                              >
-                                {producto.categoria || 'Sin categoría'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-sm">
-                              <Badge 
-                                color="purple"
-                                className="font-bold"
-                              >
-                                {producto.marca || 'Sin marca'}
-                              </Badge>
-                            </TableCell>
                             <TableCell className="text-right">
                               <Badge 
-                                color={producto.cant === 0 ? 'red' : producto.cant <= 5 ? 'amber' : 'emerald'}
+                                color={producto.cant <= 5 ? 'red' : producto.cant <= 10 ? 'amber' : 'emerald'}
                                 className="font-bold"
                               >
                                 {producto.cant} u.
@@ -826,10 +643,10 @@ function App() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* PANEL DE VENTA */}
                 <div className="lg:col-span-2 space-y-6">
-                  <Card className="shine animate-slide-up">
+                  <Card className="shine">
                     <div className="p-6">
                       <h2 className="text-2xl font-bold text-yellow-700 mb-6 flex items-center gap-3">
-                        <ShoppingCartIcon className="w-6 h-6" />
+                        <ShoppingCart className="w-6 h-6" />
                         Nueva Venta
                       </h2>
                       
@@ -870,19 +687,19 @@ function App() {
                       {/* CARRITO */}
                       <div className="space-y-4 mb-6">
                         <h3 className="text-xl font-bold text-yellow-700 flex items-center gap-2">
-                          <ShoppingCartIcon className="w-5 h-5" />
+                          <ShoppingCart className="w-5 h-5" />
                           Carrito ({carrito.length} productos)
                         </h3>
                         <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
                           {carrito.length === 0 ? (
                             <div className="text-center py-12 text-yellow-600">
-                              <ShoppingCartIcon className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                              <ShoppingCart className="w-16 h-16 mx-auto mb-4 opacity-50" />
                               <p className="text-lg font-medium">Carrito vacío</p>
                               <p className="text-sm">Agrega productos para comenzar</p>
                             </div>
                           ) : (
-                            carrito.map((item, index) => (
-                              <div key={item.id} className="flex items-center justify-between p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200 hover-lift" style={{animationDelay: `${index * 0.1}s`}}>
+                            carrito.map((item) => (
+                              <div key={item.id} className="flex items-center justify-between p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200">
                                 <div className="flex-1">
                                   <p className="font-bold text-yellow-800 text-lg">{item.name}</p>
                                   <p className="text-yellow-600 font-medium">{formatCOP(item.venta)} c/u</p>
@@ -898,7 +715,6 @@ function App() {
                                   <button
                                     onClick={() => eliminarDelCarrito(item.id)}
                                     className="p-2 text-red-600 hover:bg-red-100 rounded-xl transition-all hover:scale-110"
-                                    title="Eliminar"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
@@ -919,7 +735,7 @@ function App() {
                         <div className="grid grid-cols-2 gap-3">
                           <button
                             onClick={() => setMetodoPago('efectivo')}
-                            className={`btn-secondary flex items-center gap-2 justify-center py-4 hover-glow ${
+                            className={`btn-secondary flex items-center gap-2 justify-center py-4 ${
                               metodoPago === 'efectivo' ? 'ring-4 ring-yellow-400/50' : ''
                             }`}
                           >
@@ -928,7 +744,7 @@ function App() {
                           </button>
                           <button
                             onClick={() => setMetodoPago('transferencia')}
-                            className={`btn-secondary flex items-center gap-2 justify-center py-4 hover-glow ${
+                            className={`btn-secondary flex items-center gap-2 justify-center py-4 ${
                               metodoPago === 'transferencia' ? 'ring-4 ring-yellow-400/50' : ''
                             }`}
                           >
@@ -958,7 +774,7 @@ function App() {
                         <button
                           onClick={procesarVenta}
                           disabled={carrito.length === 0}
-                          className="btn w-full py-6 text-xl font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shine animate-bounce"
+                          className="btn w-full py-6 text-xl font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shine"
                         >
                           <CheckCircle className="w-6 h-6" />
                           Procesar Venta
@@ -971,33 +787,29 @@ function App() {
                 {/* PANEL LATERAL */}
                 <div className="space-y-6">
                   {/* ESTADÍSTICAS RÁPIDAS */}
-                  <Card className="shine animate-slide-up" style={{animationDelay: '0.2s'}}>
+                  <Card className="shine">
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-yellow-700 mb-4 flex items-center gap-2">
                         <Star className="w-5 h-5" />
                         Resumen del Día
                       </h3>
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-xl hover-lift">
+                        <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-xl">
                           <span className="text-yellow-700 font-medium">Ventas hoy:</span>
                           <span className="font-black text-yellow-800 text-xl">{ventasTurno.length}</span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-xl hover-lift">
+                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-xl">
                           <span className="text-green-700 font-medium">Total vendido:</span>
                           <span className="font-black text-green-800 text-xl">
                             {formatCOP(ventasTurno.reduce((sum, v) => sum + (v.total || 0), 0))}
                           </span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-blue-50 rounded-xl hover-lift">
-                          <span className="text-blue-700 font-medium">Productos sin stock:</span>
-                          <span className="font-black text-blue-800 text-xl">{productosSinStock}</span>
                         </div>
                       </div>
                     </div>
                   </Card>
 
                   {/* VENTAS RECIENTES */}
-                  <Card className="shine animate-slide-up" style={{animationDelay: '0.3s'}}>
+                  <Card className="shine">
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-yellow-700 mb-4 flex items-center gap-2">
                         <Clock className="w-5 h-5" />
@@ -1011,14 +823,13 @@ function App() {
                           </div>
                         ) : (
                           ventasTurno.slice().reverse().map((venta, index) => (
-                            <div key={index} className="p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200 hover-lift" style={{animationDelay: `${index * 0.1}s`}}>
+                            <div key={index} className="p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200">
                               <div className="flex justify-between items-start">
                                 <div>
                                   <p className="font-bold text-yellow-800 text-lg">{formatCOP(venta.total || 0)}</p>
                                   <p className="text-yellow-600 text-sm">
                                     {new Date(venta.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                                   </p>
-                                  <p className="text-yellow-500 text-xs">{venta.vendedor}</p>
                                 </div>
                                 <Badge size="sm" color={venta.metodo_pago === 'transferencia' ? 'blue' : 'emerald'}>
                                   {venta.metodo_pago === 'transferencia' ? 'Transf' : 'Efec'}
@@ -1038,41 +849,7 @@ function App() {
           {/* DASHBOARD */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="shine animate-slide-up">
-                  <div className="p-6 text-center">
-                    <Activity className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-yellow-700 mb-2">Ventas Totales</h3>
-                    <p className="text-3xl font-black text-yellow-800">{ventas.length}</p>
-                  </div>
-                </Card>
-                
-                <Card className="shine animate-slide-up" style={{animationDelay: '0.1s'}}>
-                  <div className="p-6 text-center">
-                    <TrendingUpIcon className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-green-700 mb-2">Ingresos Totales</h3>
-                    <p className="text-3xl font-black text-green-800">{formatCOP(valorTotalVentas)}</p>
-                  </div>
-                </Card>
-                
-                <Card className="shine animate-slide-up" style={{animationDelay: '0.2s'}}>
-                  <div className="p-6 text-center">
-                    <Package className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-blue-700 mb-2">Productos Activos</h3>
-                    <p className="text-3xl font-black text-blue-800">{productos.length}</p>
-                  </div>
-                </Card>
-                
-                <Card className="shine animate-slide-up" style={{animationDelay: '0.3s'}}>
-                  <div className="p-6 text-center">
-                    <DollarSign className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-purple-700 mb-2">Valor Inventario</h3>
-                    <p className="text-3xl font-black text-purple-800">{formatCOP(valorTotalInventario)}</p>
-                  </div>
-                </Card>
-              </div>
-              
-              <Card className="shine animate-slide-up" style={{animationDelay: '0.4s'}}>
+              <Card className="shine">
                 <div className="p-8 text-center">
                   <Sparkles className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
                   <h2 className="text-3xl font-bold text-yellow-700 mb-4">Dashboard de Ventas</h2>
@@ -1086,9 +863,9 @@ function App() {
           {/* FIADOS */}
           {activeTab === 'fiados' && (
             <div className="space-y-6">
-              <Card className="shine animate-slide-up">
+              <Card className="shine">
                 <div className="p-8 text-center">
-                  <UsersIcon className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
+                  <Users className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
                   <h2 className="text-3xl font-bold text-yellow-700 mb-4">Gestión de Fiados</h2>
                   <p className="text-yellow-600 text-lg">Control de créditos a clientes</p>
                   <p className="text-yellow-500 mt-4">Próximamente con gestión completa de fiados...</p>
@@ -1102,7 +879,7 @@ function App() {
       {/* MODAL DE PRODUCTO */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <Card className="w-full max-w-2xl mx-4 shine animate-bounce">
+          <Card className="w-full max-w-2xl mx-4 shine">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-yellow-700 flex items-center gap-3">
@@ -1140,41 +917,13 @@ function App() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-yellow-700 font-bold mb-3">Categoría</label>
-                  <select
-                    value={formData.categoria}
-                    onChange={(e) => setFormData({...formData, categoria: e.target.value})}
-                    className="w-full px-4 py-3 bg-white/90 border-2 border-yellow-400 rounded-xl text-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-400/50 focus:border-transparent font-medium"
-                  >
-                    <option value="">Seleccionar categoría</option>
-                    <option value="Cerveza">Cerveza</option>
-                    <option value="Vino">Vino</option>
-                    <option value="Whisky">Whisky</option>
-                    <option value="Ron">Ron</option>
-                    <option value="Tequila">Tequila</option>
-                    <option value="Vodka">Vodka</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-yellow-700 font-bold mb-3">Marca</label>
-                  <input
-                    type="text"
-                    value={formData.marca}
-                    onChange={(e) => setFormData({...formData, marca: e.target.value})}
-                    placeholder="Ej: Corona"
-                    className="w-full px-4 py-3 bg-white/90 border-2 border-yellow-400 rounded-xl text-yellow-800 placeholder-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-400/50 focus:border-transparent font-medium"
-                  />
-                </div>
-
                 <div className="md:col-span-2">
                   <label className="block text-yellow-700 font-bold mb-3">Nombre del Producto</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="Ej: Cerveza Corona Extra"
+                    placeholder="Ej: Cerveza Corona"
                     className="w-full px-4 py-3 bg-white/90 border-2 border-yellow-400 rounded-xl text-yellow-800 placeholder-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-400/50 focus:border-transparent font-medium"
                   />
                 </div>

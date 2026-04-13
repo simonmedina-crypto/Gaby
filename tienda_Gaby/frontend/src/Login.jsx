@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Title, Text } from "@tremor/react";
-import { Lock } from 'lucide-react';
+import { Lock, Crown, Dog } from 'lucide-react';
 
 const USUARIOS_AUTORIZADOS = [
   { id: 1, nombre: "Simon", pin: "1234", rol: "Administrador" },
@@ -11,92 +11,151 @@ const USUARIOS_AUTORIZADOS = [
 const Login = ({ onLoginSuccess }) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
   const handleIngresar = () => {
-    const user = USUARIOS_AUTORIZADOS.find(u => u.pin === pin);
-    if (user) {
-      onLoginSuccess(user);
+    const usuario = USUARIOS_AUTORIZADOS.find(u => u.pin === pin);
+    if (usuario) {
+      // Sonido de éxito
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
+      
+      onLoginSuccess(usuario);
+      setError(false);
+      setPin("");
     } else {
       setError(true);
       setPin("");
       // Sonido de error
-      new Audio('https://assets.mixkit.co/active_storage/sfx/2632/2632-preview.mp3').play();
+      const audioError = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+      audioError.volume = 0.3;
+      audioError.play().catch(() => {});
+      
+      setTimeout(() => setError(false), 2000);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 flex items-center justify-center p-4">
-      <Card className="relative max-w-md w-full p-0 bg-slate-950/80 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.8)] border border-amber-400/40 overflow-hidden">
-        <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 0 0, rgba(251,191,36,0.18), transparent 55%), radial-gradient(circle at 100% 100%, rgba(248,250,252,0.1), transparent 55%)' }} />
-        <div className="relative z-10 grid md:grid-cols-[1.3fr_1fr] gap-0">
-          <div className="p-8 flex flex-col justify-center">
-            <div className="text-center mb-6">
-              <div className="relative w-24 h-24 rounded-[32px] mx-auto mb-4 overflow-hidden ring-4 ring-amber-300/70 shadow-[0_12px_40px_rgba(0,0,0,0.8)]">
-                <img
-                  src="https://dinastiadelcachorro.com/wp-content/uploads/2024/11/Dinastia-del-Cachorro-Home-pomerania-mini-medellin.png"
-                  alt="Pomerania"
-                  className="w-full h-full object-cover"
-                />
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 flex items-center justify-center p-4">
+      {/* Fondo decorativo */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-yellow-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-10 -right-10 w-60 h-60 bg-orange-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-200/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        <Card className="bg-white/95 backdrop-blur-xl border-4 border-yellow-400/50 shadow-2xl overflow-hidden">
+          <div className="p-8">
+            {/* Header con logo */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center items-center gap-3 mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Crown className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <Title className="font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                    Licorera
+                  </Title>
+                  <Title className="font-black bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+                    Gaby
+                  </Title>
+                </div>
               </div>
-              <Title className="font-black italic text-2xl tracking-tighter uppercase text-amber-200 drop-shadow">
-                Gaby POS
-              </Title>
-              <Text className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-1">
-                Licorera · Seguridad Total
+              <Text className="text-yellow-700 font-medium text-sm">
+                Sistema de Control de Inventario
               </Text>
             </div>
 
-            <div className="space-y-4">
+            {/* Formulario de login */}
+            <div className="space-y-6">
               <div className="relative">
-                <Text className="text-[10px] font-black uppercase text-slate-300 mb-2 ml-1">Pin de Acceso</Text>
-                <input 
-                  type="password" 
-                  maxLength={4}
-                  value={pin}
-                  onChange={(e) => { setError(false); setPin(e.target.value); }}
-                  onKeyDown={(e) => e.key === 'Enter' && handleIngresar()}
-                  className={`w-full text-center text-3xl tracking-[1.5rem] p-4 bg-slate-900/70 rounded-2xl border-2 outline-none text-amber-100 placeholder-slate-600 transition-all ${
-                    error ? 'border-red-500/80 bg-red-950/40' : 'border-slate-700 focus:border-amber-400'
-                  }`}
-                  autoFocus
-                  placeholder="••••"
-                />
+                <Text className="text-yellow-700 font-bold text-sm uppercase tracking-wider mb-3 block text-center">
+                  Ingrese su PIN de Acceso
+                </Text>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-600 w-5 h-5" />
+                  <input
+                    type="password"
+                    maxLength={4}
+                    value={pin}
+                    onChange={(e) => { setError(false); setPin(e.target.value); }}
+                    onKeyDown={(e) => e.key === 'Enter' && handleIngresar()}
+                    className={`w-full text-center text-3xl tracking-[1.5rem] p-4 bg-white/90 border-4 rounded-2xl outline-none transition-all placeholder-yellow-400 ${
+                      error 
+                        ? 'border-red-500/80 bg-red-50/50 text-red-600' 
+                        : 'border-yellow-400/50 focus:border-yellow-500 focus:ring-4 focus:ring-yellow-500/20 text-yellow-800'
+                    }`}
+                    autoFocus
+                    placeholder="••••"
+                  />
+                </div>
               </div>
 
+              {/* Mensaje de error */}
               {error && (
-                <Text className="text-center text-red-400 font-bold text-[10px] uppercase">
-                  Pin incorrecto, vuelve a intentarlo
-                </Text>
+                <div className="bg-red-50/80 border border-red-200 rounded-xl p-4 text-center">
+                  <Text className="text-red-600 font-medium text-sm">
+                    PIN incorrecto. Por favor, intente nuevamente.
+                  </Text>
+                </div>
               )}
 
-              <button 
+              {/* Botón de ingreso */}
+              <button
                 onClick={handleIngresar}
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest hover:from-amber-400 hover:to-orange-400 transition-all active:scale-95 shadow-[0_15px_40px_rgba(251,191,36,0.45)]"
+                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white py-4 rounded-2xl font-bold text-lg uppercase tracking-wider transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
               >
-                ENTRAR
+                Ingresar al Sistema
+              </button>
+
+              {/* Botón de ayuda */}
+              <button
+                onClick={() => setMostrarAyuda(!mostrarAyuda)}
+                className="w-full text-yellow-600 hover:text-yellow-700 font-medium text-sm underline transition-colors"
+              >
+                {mostrarAyuda ? 'Ocultar ayuda' : 'Mostrar ayuda'}
               </button>
             </div>
+
+            {/* Panel de ayuda */}
+            {mostrarAyuda && (
+              <div className="mt-6 p-4 bg-yellow-50/50 border border-yellow-200 rounded-2xl">
+                <Text className="text-yellow-700 font-medium mb-3">
+                  Usuarios Autorizados:
+                </Text>
+                <div className="space-y-2">
+                  {USUARIOS_AUTORIZADOS.map((usuario) => (
+                    <div key={usuario.id} className="flex justify-between items-center p-3 bg-white/70 rounded-xl border border-yellow-300">
+                      <div>
+                        <Text className="font-medium text-yellow-800">{usuario.nombre}</Text>
+                        <Text className="text-yellow-600 text-sm">({usuario.rol})</Text>
+                      </div>
+                      <Text className="text-yellow-600 font-mono text-sm">
+                        PIN: {usuario.pin}
+                      </Text>
+                    </div>
+                  ))}
+                </div>
+                <Text className="text-yellow-600 text-xs mt-3 text-center">
+                  Nota: Mantenga sus PIN seguros y no los comparta con personas no autorizadas.
+                </Text>
+              </div>
+            )}
           </div>
 
-          <div className="hidden md:flex flex-col justify-between bg-gradient-to-b from-amber-200/90 via-amber-100/95 to-orange-200/90 p-4 pl-0 pr-6">
-            <div className="mt-4 ml-2 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-900/70">
-              Bienvenido
-            </div>
-            <div className="flex-1 flex items-center justify-center">
-              <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-[0_18px_55px_rgba(0,0,0,0.45)] ring-4 ring-white/80">
-                <img
-                  src="https://png.pngtree.com/png-vector/20250724/ourmid/pngtree-adorable-fluffy-pomeranian-dog-with-happy-expression-and-tongue-out-png-image_16685452.webp"
-                  alt="Pomerania sonriente"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="mb-4 text-[10px] text-amber-900/80 font-semibold uppercase tracking-widest text-right">
-              Solo personal autorizado<br />Simon · Ana · Socio
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-yellow-200">
+            <div className="flex items-center justify-center gap-2">
+              <Dog className="w-4 h-4 text-yellow-600" />
+              <Text className="text-yellow-600 text-xs">
+                Licorera Gaby 2024 - Sistema Seguro
+              </Text>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

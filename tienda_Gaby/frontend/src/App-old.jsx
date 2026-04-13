@@ -4,23 +4,15 @@ import { Card, Metric, Text, Title, Badge, Table, TableHead, TableRow, TableHead
 import { es } from 'date-fns/locale';
 import { Barcode, TrendingUp, TrendingDown, X, Save, Plus, Edit3, Trash2, Search, Menu, LogOut, Package, LayoutDashboard, ShoppingCart, ScanLine, Zap, CreditCard, DollarSign, Wallet, Users, Calendar, Clock, Award, Eye, ChevronRight, User, CheckCircle, AlertCircle, Wine, RefreshCw, FileDown, AlertTriangle, Beer, GlassWater, Upload, Image as ImageIcon, Star, Crown, Sparkles } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { crearFiado, obtenerFiados, obtenerFiadosPendientes, cobrarFiado, eliminarFiado } from './api/fiadosApi';
+import { getInventory, createProduct, updateProduct, deleteProduct, getProductByBarcode } from './api/inventoryApi';
+import { getSalesHistory, processSale, getSalesMetrics, getDailySummary } from './api/salesApi';
 import './dashboard-calendar.css';
 import './styles-pomerania.css';
 
-// Datos de ejemplo para el inventario (sin depender de API)
-const PRODUCTOS_EJEMPLO = [
-  { id: '001', name: 'Cerveza Corona', barcode: '750100123456', cant: 24, costo: 15.0, venta: 25.0 },
-  { id: '002', name: 'Cerveza Heineken', barcode: '750100123457', cant: 18, costo: 18.0, venta: 28.0 },
-  { id: '003', name: 'Vino Tinto', barcode: '750100123458', cant: 12, costo: 45.0, venta: 65.0 },
-  { id: '004', name: 'Whisky Johnnie Walker', barcode: '750100123459', cant: 8, costo: 120.0, venta: 150.0 },
-  { id: '005', name: 'Ron Bacardi', barcode: '750100123460', cant: 15, costo: 35.0, venta: 45.0 },
-  { id: '006', name: 'Tequila Jose Cuervo', barcode: '750100123461', cant: 10, costo: 55.0, venta: 75.0 },
-];
+const API_URL = import.meta.env.VITE_API_URL;
 
-const VENTAS_EJEMPLO = [
-  { id: 1, producto_id: '001', nombre_producto: 'Cerveza Corona', cantidad: 2, precio_unitario: 25.0, total: 50.0, metodo_pago: 'efectivo', fecha: new Date().toISOString(), vendedor: 'Simon' },
-  { id: 2, producto_id: '002', nombre_producto: 'Cerveza Heineken', cantidad: 1, precio_unitario: 28.0, total: 28.0, metodo_pago: 'transferencia', fecha: new Date().toISOString(), vendedor: 'Ana' },
-];
+const getProductos = () => getInventory();
 
 // Función para formatear moneda colombiana
 const formatCOP = (value) => {
@@ -74,48 +66,6 @@ function App() {
   const inputRef = useRef(null);
   const cantidadRef = useRef(null);
 
-  // --- FUNCIÓN PARA CARGAR DATOS LOCALES ---
-  const cargarDatos = () => {
-    try {
-      // Cargar productos de ejemplo
-      setProductos(PRODUCTOS_EJEMPLO);
-      
-      // Cargar ventas de ejemplo
-      setVentas(VENTAS_EJEMPLO);
-      
-      // Cargar ventas del turno actual
-      const hoy = new Date().toDateString();
-      const ventasHoy = VENTAS_EJEMPLO.filter(v => new Date(v.fecha).toDateString() === hoy);
-      setVentasTurno(ventasHoy);
-      
-      console.log('Datos cargados exitosamente (modo local)');
-    } catch (error) {
-      console.error('Error al cargar datos:', error);
-      Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
-    }
-  };
-
-  // --- FUNCIÓN PARA BUSCAR PRODUCTO POR CÓDIGO DE BARRAS ---
-  const buscarProductoPorBarcode = (barcode) => {
-    if (!barcode.trim()) return null;
-    
-    const producto = PRODUCTOS_EJEMPLO.find(p => p.barcode === barcode.trim());
-    if (producto) {
-      return producto;
-    } else {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        title: 'Producto no encontrado',
-        text: `No hay producto con el código: ${barcode}`,
-        position: 'center',
-        timer: 2000,
-        showConfirmButton: false
-      });
-      return null;
-    }
-  };
-
   // --- FUNCIÓN CENTRALIZADA PARA AGREGAR AL CARRITO ---
   const agregarProductoAlCarrito = (producto, cantidadSolicitada = 1) => {
     // 1. Validar Stock Absoluto
@@ -162,7 +112,7 @@ function App() {
     if (indiceExistente !== -1) {
       const nuevoCarrito = [...carrito];
       nuevoCarrito[indiceExistente].cantidad += cantidadSolicitada;
-      nuevoCarrito[indiceExistente].subtotal = nuevoCarrito[indiceExistente].cantidad * nuevoCarrito[indiceExistente].venta;
+      nuevoCarrito[indiceExistente].subtotal = nuevoCarrito[indiceExistente].cantidad * nuevoCarrito[indiceExistente].precio_venta;
       setCarrito(nuevoCarrito);
     } else {
       setCarrito([...carrito, {
@@ -210,14 +160,14 @@ function App() {
 
     const nuevoCarrito = carrito.map(item => 
       item.id === id 
-        ? { ...item, cantidad: nuevaCantidad, subtotal: nuevaCantidad * item.venta }
+        ? { ...item, cantidad: nuevaCantidad, subtotal: nuevaCantidad * item.precio_venta }
         : item
     );
     setCarrito(nuevoCarrito);
   };
 
   // --- FUNCIÓN PARA PROCESAR VENTA ---
-  const procesarVenta = () => {
+  const procesarVenta = async () => {
     if (carrito.length === 0) {
       Swal.fire('Error', 'El carrito está vacío', 'error');
       return;
@@ -234,9 +184,7 @@ function App() {
     }
 
     try {
-      // Simular venta exitosa
-      const nuevaVenta = {
-        id: ventas.length + 1,
+      const ventaData = {
         items: carrito.map(item => ({
           producto_id: item.id,
           cantidad: item.cantidad,
@@ -248,24 +196,10 @@ function App() {
         es_fiado: esFiado,
         nombre_cliente: esFiado ? nombreClienteFiado : null,
         pago_con: metodoPago === 'efectivo' ? pagoCon : null,
-        cambio: metodoPago === 'efectivo' ? pagoCon - total : 0,
-        fecha: new Date().toISOString(),
-        vendedor: usuarioLogueado?.nombre || 'Sistema'
+        cambio: metodoPago === 'efectivo' ? pagoCon - total : 0
       };
 
-      // Agregar venta al historial
-      setVentas([...ventas, nuevaVenta]);
-      setVentasTurno([...ventasTurno, nuevaVenta]);
-
-      // Actualizar stock de productos
-      const productosActualizados = productos.map(producto => {
-        const itemEnCarrito = carrito.find(item => item.id === producto.id);
-        if (itemEnCarrito) {
-          return { ...producto, cant: producto.cant - itemEnCarrito.cantidad };
-        }
-        return producto;
-      });
-      setProductos(productosActualizados);
+      await processSale(ventaData);
 
       // Sonido de venta exitosa
       const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
@@ -285,35 +219,81 @@ function App() {
       setPagoCon(0);
       setEsFiado(false);
       setNombreClienteFiado('');
+      
+      // Recargar datos
+      await cargarDatos();
     } catch (error) {
       console.error('Error:', error);
       Swal.fire('Error', error.message || 'No se pudo procesar la venta', 'error');
     }
   };
 
+  // --- FUNCIÓN PARA BUSCAR PRODUCTO POR CÓDIGO DE BARRAS ---
+  const buscarProductoPorBarcode = async (barcode) => {
+    if (!barcode.trim()) return;
+    
+    try {
+      const producto = await getProductByBarcode(barcode.trim());
+      if (producto) {
+        agregarProductoAlCarrito(producto, cantidadVenta);
+      } else {
+        Swal.fire({
+          toast: true,
+          icon: 'warning',
+          title: 'Producto no encontrado',
+          text: `No hay producto con el código: ${barcode}`,
+          position: 'center',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    } catch (error) {
+      console.error('Error al buscar producto:', error);
+      Swal.fire('Error', 'No se pudo buscar el producto', 'error');
+    }
+  };
+
+  // --- FUNCIÓN PARA CARGAR DATOS ---
+  const cargarDatos = async () => {
+    try {
+      const productosData = await getProductos();
+      setProductos(productosData);
+      
+      const ventasData = await getSalesHistory();
+      setVentas(ventasData);
+      
+      // Cargar ventas del turno actual
+      const hoy = new Date().toDateString();
+      const ventasHoy = ventasData.filter(v => new Date(v.fecha).toDateString() === hoy);
+      setVentasTurno(ventasHoy);
+      
+      // Cargar fiados
+      const fiadosData = await obtenerFiados();
+      setFiados(fiadosData);
+      
+      const fiadosPendientesData = await obtenerFiadosPendientes();
+      setFiadosPendientes(fiadosPendientesData);
+    } catch (error) {
+      console.error('Error al cargar datos:', error);
+      Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    }
+  };
+
   // --- FUNCIÓN PARA CREAR/EDITAR PRODUCTO ---
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     try {
       if (isEditing) {
-        // Actualizar producto existente
-        const productosActualizados = productos.map(p => 
-          p.id === formData.id ? formData : p
-        );
-        setProductos(productosActualizados);
+        await updateProduct(formData.id, formData);
         Swal.fire('¡Actualizado!', 'El producto ha sido actualizado', 'success');
       } else {
-        // Crear nuevo producto
-        const nuevoProducto = {
-          ...formData,
-          id: formData.id || String(productos.length + 1).padStart(3, '0')
-        };
-        setProductos([...productos, nuevoProducto]);
+        await createProduct(formData);
         Swal.fire('¡Creado!', 'El producto ha sido creado', 'success');
       }
       
       setIsModalOpen(false);
       setFormData({ id: '', name: '', cant: 0, costo: 0, venta: 0, barcode: '' });
       setIsEditing(false);
+      await cargarDatos();
     } catch (error) {
       console.error('Error:', error);
       Swal.fire('Error', error.message || 'No se pudo guardar el producto', 'error');
@@ -335,8 +315,7 @@ function App() {
       });
 
       if (result.isConfirmed) {
-        const productosActualizados = productos.filter(p => p.id !== productId);
-        setProductos(productosActualizados);
+        await deleteProduct(productId);
         
         Swal.fire({
           title: '¡Eliminado!',
@@ -345,6 +324,8 @@ function App() {
           timer: 1500,
           showConfirmButton: false
         });
+        
+        cargarDatos();
       }
     } catch (error) {
       console.error('Error:', error);
@@ -369,7 +350,7 @@ function App() {
 
   // --- RENDER ---
   if (!usuarioLogueado) {
-    return <Login onLoginSuccess={setUsuarioLogueado} />;
+    return <Login onLogin={setUsuarioLogueado} />;
   }
 
   return (
@@ -663,10 +644,7 @@ function App() {
                               onChange={(e) => setBarcode(e.target.value)}
                               onKeyPress={(e) => {
                                 if (e.key === 'Enter') {
-                                  const producto = buscarProductoPorBarcode(barcode);
-                                  if (producto) {
-                                    agregarProductoAlCarrito(producto, cantidadVenta);
-                                  }
+                                  buscarProductoPorBarcode(barcode);
                                 }
                               }}
                               placeholder="Escanear o ingresar código..."
